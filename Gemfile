@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 gem 'rails', '3.2.8'
 gem 'bootstrap-sass', '2.1'
+gem 'quiet_assets'
 
 group :development, :production do
 	gem 'bcrypt-ruby'
@@ -23,6 +24,7 @@ gem 'jquery-rails', '2.0.2'
 
 group :test do
   gem 'capybara', '1.1.2'
+  gem 'factory_girl_rails'
 end
 
 group :production do

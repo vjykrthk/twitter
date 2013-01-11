@@ -22,9 +22,5 @@ describe "StaticPages" do
     it { should have_content('Contact') }
     it { should have_selector('title', :text => full_title('Contact')) }      
   end
-  describe "Signup page" do
-    before { visit signup_path }
-    it { should have_content('Sign Up') }
-    it { should have_selector('title', :text => full_title('Sign Up')) }      
-  end
+
 end
