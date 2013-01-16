@@ -6,4 +6,11 @@ class User < ActiveRecord::Base
   #validates :password, presence:true 
   has_secure_password
   before_save { self.email.downcase! }
+  before_save :set_remember_token
+
+  private
+
+  	def set_remember_token
+  		self.remember_token = SecureRandom.urlsafe_base64
+  	end
 end

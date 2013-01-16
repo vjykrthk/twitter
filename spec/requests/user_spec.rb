@@ -11,6 +11,12 @@ describe "User" do
 	it { should respond_to(:password) }
 	it { should respond_to(:password_confirmation) }
 	it { should respond_to(:authenticate) }
+	describe "remember token" do
+		before { @user.save }
+		it { should respond_to(:remember_token) }
+		its(:remember_token)  { should_not be_nil }
+	end
+	
 
 	it { should be_valid }
 	describe "email with mixed casing" do

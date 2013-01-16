@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 gem 'rails', '3.2.8'
 gem 'bootstrap-sass', '2.1'
 gem 'quiet_assets'
+gem 'thin'
 
 group :development, :production do
 	gem 'bcrypt-ruby'

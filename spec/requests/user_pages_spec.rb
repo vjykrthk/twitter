@@ -7,6 +7,36 @@ describe "UserPages" do
 		it { should have_content('Sign Up') }
 		it { should have_selector('title', :text => full_title('Sign Up')) }      
 	end
+	describe "Signin" do
+		before { visit signin_path }
+		it { should have_content('Sign in') }
+		it { should have_selector('title', :text => full_title('Sign in')) }      
+		describe "Invalid signin" do
+			before { click_button "Submit" }
+			it "after signin" do
+				should have_selector('div.alert.alert-error', :text => 'Invalid')
+			end
+		end
+		describe "valid sigin" do
+			let(:user) { FactoryGirl.create(:user) }
+			before do
+				fill_in "Email", with:user.email
+				fill_in "Password", with:user.password
+				click_button "Submit"
+			end
+			describe "after submission" do
+				it { should have_link("Profile") }
+				it { should have_link("Sign out", :href => signout_path) }
+			end
+		end		
+	end
+
+	describe "Signout" do
+		before { visit signout_path }
+		it { should have_link("Sign in", :href => signin_path) }
+	end
+
+
 	describe "Show page" do
 		let(:user) { FactoryGirl.create(:user) }
 		before { visit user_path(user) }

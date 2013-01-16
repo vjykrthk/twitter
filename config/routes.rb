@@ -1,7 +1,13 @@
 Twitter::Application.routes.draw do
 
+  resources :sessions, only:[:new, :create, :destroy]
   resources :users
+
+  root to:"static_pages#home"
+
+  match "/signin", to:"sessions#new"
   match "/signup", to:"users#new"
+  match "/signout", to:"sessions#destroy"
 
   match '/home', to:"static_pages#home"
   match '/help', to:"static_pages#help"
