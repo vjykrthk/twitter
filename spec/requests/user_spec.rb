@@ -11,6 +11,17 @@ describe "User" do
 	it { should respond_to(:password) }
 	it { should respond_to(:password_confirmation) }
 	it { should respond_to(:authenticate) }
+	it { should respond_to(:admin) }
+	it { should_not be_admin }
+
+	describe "Admin attribute set to true" do
+		before do
+			@user.save!
+			@user.toggle(:admin)
+		end
+		it { should be_admin }
+	end
+
 	describe "remember token" do
 		before { @user.save }
 		it { should respond_to(:remember_token) }
@@ -102,9 +113,23 @@ describe "User" do
 				specify { user_not_found.should be_false }
 			end
 		end
-
-
-
 	end
-	
+	describe "Edit user" do
+		let(:user) { FactoryGirl.create(:user) }
+		let(:new_name) { "New name" }
+		let(:new_email) { "newname@example.org"}
+		before do
+			signin_user(user)
+			visit edit_user_path(user)
+		end
+		it "Should update the record" do
+			fill_in "Name", with:new_name
+			fill_in "Email", with:new_email
+			fill_in "Password", with:user.password
+			fill_in  "Password confirmation", with:user.password_confirmation
+			click_button "save changes"
+			user.reload.name.should == new_name
+		end
+	end
+
 end

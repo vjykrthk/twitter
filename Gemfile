@@ -3,7 +3,9 @@ gem 'rails', '3.2.8'
 gem 'bootstrap-sass', '2.1'
 gem 'quiet_assets'
 gem 'thin'
-
+gem 'faker'
+gem 'will_paginate'
+gem 'bootstrap-will_paginate'
 group :development, :production do
 	gem 'bcrypt-ruby'
 end

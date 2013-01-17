@@ -76,4 +76,83 @@ describe "UserPages" do
 			end
 		end
 	end
+
+	describe "Edit page" do
+		let(:user) { FactoryGirl.create(:user) }
+		before do
+			signin_user(user)
+			visit edit_user_path(user)
+		end
+		it { should have_selector('h2', text:"Update your profile") }
+		it { should have_selector('title', text:"Edit user") }
+		it { should have_link('change', href:"http://gravatar.com/emails") }
+
+		describe "Invalid information" do
+			before { click_button 'save changes' }
+			it { should have_content("error") }
+		end
+	end
+
+	describe "Friendly forwading" do
+		let(:user)  { FactoryGirl.create(:user) }
+		before do 
+			visit edit_user_path(user) 
+			signin_user(user)
+		end
+		it { should have_selector('h2', text:"Update your profile") }
+	end
+
+	describe "Index" do
+		let(:first_user) { FactoryGirl.create(:user) }		
+		before(:all) do			
+			signin_user(first_user)
+			30.times do |n|
+				FactoryGirl.create(:user)
+			end
+			visit users_path
+		end
+		after(:all) { User.delete_all }
+		#it { should have_selector('h2', text:'All users') }
+		it "should show list of all users" do
+			User.paginate(page: 1).each do |user|
+				page.should have_selector('li', text:user.name)
+			end
+		end
+	end
+
+	describe "Admin:" do
+		describe "a user not admin should not see delete link" do
+			let(:user) { FactoryGirl.create(:user) }
+			before do
+				signin_user user
+				visit users_path
+			end
+			it { should_not have_link("delete") }
+		end
+
+		describe "a admin user should see delete link" do
+			let!(:admin) { FactoryGirl.create(:admin) }
+			let!(:user) { FactoryGirl.create(:user) }
+			before do
+				signin_user admin
+				visit users_path
+			end
+			it { should have_link("delete") }
+			it { should_not have_link("delete", href:user_path(admin)) }
+			it "should be able to delete users" do
+				expect { click_link "delete" }.to change(User, :count).by(-1)
+			end
+		end
+
+		# describe "non admin user should be redirected to root url" do
+		# 	let(:non_admin) { FactoryGirl.create(:user) }
+		# 	let(:user) { FactoryGirl.create(:user) }
+		# 	before do
+		# 		signin_user non_admin
+		# 		delete user_path(user)
+		# 	end
+		# 	specify { response.should redirect_to(root_url) }
+		# end
+
+	end
 end
