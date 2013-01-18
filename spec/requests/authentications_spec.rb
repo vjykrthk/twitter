@@ -39,4 +39,15 @@ describe "Authentications" do
 		before { visit users_path }
 		it { should have_selector('h2', text:"Sign in") }
 	end
+
+	describe "in the Micropost controller" do
+		describe "submitting to create action" do
+			before { post microposts_path }
+			it { response.should redirect_to(signin_path) }
+		end
+		describe "submitting to create action" do
+			before { delete micropost_path(FactoryGirl.create(:user)) }
+			it { response.should redirect_to(signin_path) }
+		end
+	end
 end

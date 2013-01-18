@@ -39,9 +39,16 @@ describe "UserPages" do
 
 	describe "Show page" do
 		let(:user) { FactoryGirl.create(:user) }
+		let!(:m1) { FactoryGirl.create(:micropost, user:user, content:"Foo foo foo") }
+		let!(:m2) { FactoryGirl.create(:micropost, user:user, content:"bar foo foo") }
 		before { visit user_path(user) }
 		it { should have_selector('title', :text => user.name) }
 		it { should have_selector('h2', :text => user.name) }
+		it "should show the microposts" do
+			should have_content(user.microposts.count)
+			should have_content("Foo foo foo")
+			should have_content("bar foo foo")
+		end
 	end
 
 	describe "Signup" do
@@ -153,6 +160,24 @@ describe "UserPages" do
 		# 	end
 		# 	specify { response.should redirect_to(root_url) }
 		# end
+
+		describe "Micropost form" do
+			let(:user) { FactoryGirl.create(:user) }
+			before do
+				signin_user(user)
+				visit home_path
+			end
+			describe "Invalid form submission" do
+				before { click_button 'Post' }
+				it { should have_content('error')  }
+			end
+			describe "Valid form submission" do
+				before { fill_in 'micropost_content', with:"fooo bar" }
+				it "should create a new micropost" do
+					expect { click_button 'Post' }.to change(Micropost, :count).by(1)
+				end
+			end
+		end
 
 	end
 end
