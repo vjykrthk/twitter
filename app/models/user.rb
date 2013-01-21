@@ -7,6 +7,11 @@ class User < ActiveRecord::Base
   has_secure_password
   before_save { self.email.downcase! }
   before_save :set_remember_token
+  has_many :microposts, dependent: :destroy
+
+  def feed
+    Micropost.where("user_id = ?", id)
+  end
 
   private
 
