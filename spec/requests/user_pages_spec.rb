@@ -43,7 +43,7 @@ describe "UserPages" do
 		let!(:m2) { FactoryGirl.create(:micropost, user:user, content:"bar foo foo") }
 		before { visit user_path(user) }
 		it { should have_selector('title', :text => user.name) }
-		it { should have_selector('h2', :text => user.name) }
+		it { should have_selector('h3', :text => user.name) }
 		it "should show the microposts" do
 			should have_content(user.microposts.count)
 			should have_content("Foo foo foo")
@@ -177,6 +177,52 @@ describe "UserPages" do
 					expect { click_button 'Post' }.to change(Micropost, :count).by(1)
 				end
 			end
+		end
+	end
+	describe "following/followers" do
+		let(:user) { FactoryGirl.create(:user) }
+		let(:other_user) { FactoryGirl.create(:user) }
+		before do 
+			signin_user(user)
+			user.follow!(other_user) 
+			puts "user relationships: #{user.relationships}"
+		end
+		describe "should have following link" do
+			before { visit user_path(user) }
+			it { should have_link("1 following", href:following_user_path(user)) }
+			it { should have_link("0 followers", href:followers_user_path(user)) }
+		end
+		describe "should have followers link" do
+			before { visit user_path(other_user) }
+			it { should have_link("0 following", href:following_user_path(other_user)) }
+			it { should have_link("1 followers", href:followers_user_path(other_user)) }
+		end
+
+		describe "following page" do
+			before { visit following_user_path(user) }
+			it { should have_link( other_user.name, href:user_path(other_user)) }
+		end
+		describe "followers page" do
+			before { visit followers_user_path(other_user) }
+			it { should have_link( user.name, href:user_path(user)) }
+		end
+	end
+
+	describe "follow and unfollow another user" do
+		let(:user) { FactoryGirl.create(:user) }
+		let(:other_user) { FactoryGirl.create(:user) }
+		before do
+			signin_user(user)
+			visit user_path(other_user)
+		end
+		it { should have_selector('input', value:"Follow") }
+		describe "follow flow", js:true do
+			it { expect { click_button 'Follow' }.to change(Relationship, :count).by(1) }
+			it { should have_selector('input', value:"Unfollow") }
+		end
+		describe "unfollow flow" do
+			before { click_button 'Follow' }
+			it { expect { click_button 'Unfollow'}.to change(Relationship, :count).by(-1) }
 		end
 
 	end

@@ -1,0 +1,32 @@
+<% provide(:title, @user.name) %>
+<div class="row">
+	<aside class="span4">
+		<section>
+			<h3>
+				<%= gravatar_for @user, size:50 %>
+				<%= @user.name %>
+			</h3>		
+		</section>
+		<section>
+			<%= render 'shared/stats' %>
+		</section>
+		<section>
+			<% @other_users.each do |other_user| %>
+			<%= gravatar_for other_user, size:25 %>
+			<% end %>
+		</section>
+	</aside>
+	<div class="span8">
+		<% if @other_users.any? %>
+			<%= content_tag(:h3, @title) %>
+			<ul class="users">
+				<% @other_users.each do |other_user| %>
+					<li>
+						<%= link_to(other_user.name, other_user) %>
+					</li>
+				<% end %>
+			</ul>
+		<% end %>
+		<%= will_paginate @other_users %>
+	</div>	
+</div>

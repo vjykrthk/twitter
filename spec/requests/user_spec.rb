@@ -13,6 +13,13 @@ describe "User" do
 	it { should respond_to(:authenticate) }
 	it { should respond_to(:admin) }
 	it { should respond_to(:microposts) }
+	it { should respond_to(:relationships) }
+	it { should respond_to(:reverse_relationships) }
+	it { should respond_to(:followed_users) }
+	it { should respond_to(:followers) }
+	it { should respond_to(:follow!) }
+	it { should respond_to(:unfollow!) }
+	it { should respond_to(:following?) }
 	it { should_not be_admin }
 
 
@@ -92,10 +99,10 @@ describe "User" do
 		end
 
 
-		#describe "when password is not present" do
-			#before { @user.password = @user.password_confirmation = " " }
-			#it { should_not be_valid }
-		#end
+		describe "when password is not present" do
+			before { @user.password = @user.password_confirmation = " " }
+			it { should_not be_valid }
+		end
 
 
 		describe "password and password confirmation should match" do
@@ -138,13 +145,18 @@ describe "User" do
 		before { @user.save }
 	    let!(:older_micropost) { FactoryGirl.create(:micropost, user:@user, created_at:1.day.ago) }
 	    let!(:newer_micropost) { FactoryGirl.create(:micropost, user:@user, created_at:1.hour.ago) }
+	    let(:followed_user) { FactoryGirl.create(:user) }
+	    let(:unfollowed_user) { FactoryGirl.create(:user) }
+	    let!(:followed_post) { FactoryGirl.create(:micropost, user:followed_user) }
+	    let!(:unfollowed_post) { FactoryGirl.create(:micropost, user:unfollowed_user) }
 		describe "Most recent microposts should be returned first" do
 			its(:microposts) { should == [newer_micropost, older_micropost] }
   		end
   		describe "status" do
-  			let!(:unfollowed_post) { FactoryGirl.create(:micropost, user:FactoryGirl.create(:user)) }
+  			before { @user.follow!(followed_user) }
   			its(:feed) { should include(older_micropost) }
   			its(:feed) { should include(newer_micropost) }
+  			its(:feed) { should include(followed_post) }
   			its(:feed) { should_not include(unfollowed_post) }
   		end
 	  	describe "When user is deleted all his micropost should be deleted" do
@@ -157,5 +169,25 @@ describe "User" do
 	    	end
 	  	end
 	end
-	
+
+	describe "User following" do
+		let(:other_user) { FactoryGirl.create(:user) }
+		before do
+			@user.save
+			@user.follow!(other_user)
+		end
+		it { should be_following(other_user) }
+		its (:followed_users) { should include(other_user) }
+
+		describe "followers" do
+			subject { other_user }
+			its(:followers) { should include(@user) }
+		end
+		
+		describe "Unfollow" do
+			before { @user.unfollow!(other_user) }
+			it { should_not be_following(other_user) }
+			its (:followed_users) { should_not include(other_user) }
+		end
+	end	
 end

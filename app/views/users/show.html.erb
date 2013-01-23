@@ -2,13 +2,18 @@
 <div class="row">
 	<aside class="span4">
 		<section>
-			<h2>
+			<h3>
 				<%= gravatar_for @user, size:50 %>
 				<%= @user.name %>
-			</h2>		
+			</h3>		
 		</section>
+		<section>
+			<%= render 'shared/stats' %>
+		</section>
+		
 	</aside>
 	<div class="span8">
+		<%= render 'follow_form' %>
 		<% if @microposts.any? %>
 			<%= content_tag(:h3, "Micropost(#{@microposts.count})") %>
 			<ol class="microposts">
