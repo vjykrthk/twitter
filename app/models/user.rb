@@ -8,9 +8,25 @@ class User < ActiveRecord::Base
   before_save { self.email.downcase! }
   before_save :set_remember_token
   has_many :microposts, dependent: :destroy
+  has_many :relationships, foreign_key: "follower_id", dependent: :destroy
+  has_many :reverse_relationships, class_name: "Relationship", foreign_key: "followed_id"
+  has_many :followed_users, through: :relationships, source:"followed"
+  has_many :followers, through: :reverse_relationships, source:"follower"
 
   def feed
-    Micropost.where("user_id = ?", id)
+    Micropost.feed_for_user(self)
+  end
+
+  def follow!(followed_user)
+    relationships.create!(followed_id:followed_user.id)
+  end
+
+  def unfollow!(user)
+    relationships.find_by_followed_id(user.id).destroy
+  end
+
+  def following?(user)
+    relationships.find_by_followed_id(user.id)
   end
 
   private

@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 	include SessionHelper
-	before_filter :user_signed_in, only:[:index, :edit, :update, :destroy]
+	before_filter :user_signed_in, only:[:index, :edit, :update, :destroy, :following, :followers]
 	before_filter :check_right_user, only:[:edit, :update]
 	before_filter :admin_user, only:[:destroy]
 	def new
@@ -37,6 +37,20 @@ class UsersController < ApplicationController
 		User.find(params[:id]).destroy
 		flash[:success] = "User successfully deleted"
 		redirect_to users_url
+	end
+
+	def following
+		@user = User.find_by_id(params[:id])
+		@other_users = @user.followed_users.paginate(page:params[:page])
+		@title = "Followed users"
+		render 'users_follow'
+	end
+
+	def followers
+		@user = User.find_by_id(params[:id])
+		@other_users = @user.followers.paginate(page:params[:page])
+		@title = "Followers"
+		render 'users_follow'
 	end
 
 	private

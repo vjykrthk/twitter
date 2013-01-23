@@ -11,10 +11,15 @@ describe "StaticPages" do
 
   describe "Home page after sigin in" do
     let(:user) { FactoryGirl.create(:user) }
+    let(:followed_user) { FactoryGirl.create(:user) }
+    let(:unfollowed_user) { FactoryGirl.create(:user) }
     let!(:m1) { FactoryGirl.create(:micropost, user:user, content:"Foo foo bar") }
     let!(:m2) { FactoryGirl.create(:micropost, user:user, content:"Bar bar") }
+    let!(:followed_micropost) { FactoryGirl.create(:micropost, user:followed_user, content:"followed users post")}
+    let!(:unfollowed_micropost) { FactoryGirl.create(:micropost, user:unfollowed_user, content:"followed users post")}
     before do
       signin_user(user)
+      user.follow!(followed_user)
       visit home_path
     end
     it { should_not have_selector('h2', text:'Home') }
@@ -28,7 +33,15 @@ describe "StaticPages" do
     end 
     it "should delete a micropost" do
       expect { click_link "delete" }.to change(Micropost, :count).by(-1)
-    end    
+    end
+    describe "feeds" do
+      subject { user }
+      its(:feed) { should include(m1) }
+      its(:feed) { should include(m2) }
+      its(:feed) { should include(followed_micropost) }
+      its(:feed) { should_not include(unfollowed_micropost)}    
+    end
+    
   end
 
   describe "Help page" do

@@ -1,8 +1,10 @@
 class StaticPagesController < ApplicationController
  include SessionHelper
-  def home
-  	@micropost = current_user.microposts.build
-  	@feed_items = current_user.feed.paginate(page:params[:page])
+  def home    
+  	if signed_in?
+      @micropost = current_user.microposts.build
+    	@feed_items = current_user.feed.paginate(page:params[:page])
+    end
   end
 
   def help
