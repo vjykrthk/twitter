@@ -1,0 +1,10 @@
+<%= link_to "reply", "#", class:"reply_form_link" %>
+<div style="display:none" class="wrap_reply_form">
+	<%= form_for current_user.microposts.build do |f| %>			
+		<%= render 'shared/form_errors', object:f.object %>
+		<%= f.hidden_field :in_reply_to, value:micropost.id %>
+		<%= f.text_area :content, value:"@#{current_user.name} ",  rows:4 %>
+		<%= f.submit "Post", class:"btn btn-primary" %>
+		<button class="btn btn-primary close_reply_form"%>Close</button>
+	<% end %>
+</div>

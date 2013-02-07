@@ -226,4 +226,15 @@ describe "UserPages" do
 		end
 
 	end
+	describe "#reply" do
+		let(:user) { FactoryGirl.create(:user) }
+		let(:followed_user) { FactoryGirl.create(:user) }
+		let(:micropost) { FactoryGirl.create(user:followed_user) }
+		let(:reply_micropost) { FactoryGirl.create(user:user, in_reply_to:)}
+		before do
+			signin_user(user)
+			user.follow!(followed_user)
+			visit user_path(followed_user)
+		end
+	end
 end

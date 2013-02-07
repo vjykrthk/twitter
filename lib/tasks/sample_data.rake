@@ -34,9 +34,11 @@ def add_relationships
 	followed_users = users[3..50]
 	followers = users[5..50]
 	followed_users.each do |followed_user|
+		puts "follower id : #{user.id} followed id : #{followed_user.id}"
 		user.follow!(followed_user)
 	end
 	followers.each do |follower|
+		puts "follower id : #{follower.id} followed id : #{user.id}"
 		follower.follow!(user)
 	end
 end

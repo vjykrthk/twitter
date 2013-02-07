@@ -11,11 +11,9 @@
 			<section>
 				<%= render 'shared/stats' %>
 			</section>
-			<%= form_for @micropost do |f| %>			
-				<%= render 'shared/form_errors', object:f.object %>
-				<%= f.text_area :content %>
-				<%= f.submit "Post", class:"btn btn-large btn-primary" %>
-			<% end %>
+			<section>
+				<%= render 'shared/micropost_form' %>
+			</section>
 		</aside>
 		<div class="span8">
 			<h3>Micropost feed</h3>

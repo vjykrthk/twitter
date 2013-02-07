@@ -10,6 +10,7 @@ FactoryGirl.define do
 	end		
 	factory :micropost do
 		content "Lorem ipsum"
+		in_reply_to 0
 		user
 	end
 end

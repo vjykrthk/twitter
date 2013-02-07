@@ -11,7 +11,9 @@ class UsersController < ApplicationController
 	end
 	def show
 		@user = User.find_by_id(params[:id])
-		@microposts = @user.microposts.paginate(page: params[:page])
+		store_location
+		#@microposts = @user.microposts.paginate(page: params[:page])
+    @microposts = @user.search_posts(params[:query]).paginate(page: params[:page])
 	end
 	def create
 		@user = User.new(params[:user])

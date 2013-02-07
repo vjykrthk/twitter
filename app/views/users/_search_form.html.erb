@@ -1,0 +1,6 @@
+<div class="search-form">
+  <%= form_tag user_path, method: :get do %>
+      <%= text_field_tag :query, params[:query], class:"input-large seach-query" %>
+      <%= submit_tag "Search", name:nil, class:"btn btn-primary search-button" %>
+  <% end %>
+</div>

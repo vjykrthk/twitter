@@ -1,5 +1,18 @@
 <li>
 	<span class="content"><%= micropost.content %></span>
 	<span class="timestamp"><%= time_ago_in_words(micropost.created_at) %></span>
-	<%= link_to "delete", micropost_path(micropost), method: :delete, data: { confirm:"Are you sure?"}, title:micropost.content  %>
+	<% if current_user.admin? %>
+		<%= link_to "delete", micropost_path(micropost), method: :delete, data: { confirm:"Are you sure?"}, title:micropost.content  %>
+	<% end %>
+		<span class="wrap_for_reply_form" >
+			<% if current_user.following?(@user) && current_user != micropost.user %>
+					<%= render 'shared/reply_form', micropost:micropost %>
+			<% end %> 	
+		</span>	
+	<% if micropost.including_replies.any? %>		
+		<ol class="microposts" style="margin-left:10px">
+			<% @ms = micropost.including_replies %>
+			<%= render partial:'microposts/micropost', collection:@ms %>
+		</ol>
+	<% end %>		
 </li>

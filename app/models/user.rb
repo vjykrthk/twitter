@@ -29,6 +29,21 @@ class User < ActiveRecord::Base
     relationships.find_by_followed_id(user.id)
   end
 
+  def search_posts(query)
+    if query.present?
+      #sanitized_query = sanitize(query)
+      condition = <<-EOS
+        search_post @@ '#{query}'
+      EOS
+      order = <<-EOS
+        ts_rank_cd(search_post, '#{query}') DESC
+      EOS
+      microposts.where(condition).order(order)
+    else
+      microposts
+    end
+  end
+
   private
 
   	def set_remember_token
