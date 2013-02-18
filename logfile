@@ -1,0 +1,1 @@
+postgres cannot access the server configuration file "/home/admin/Public/twitter/var/lib/pgsql/data/postgresql.conf": No such file or directory

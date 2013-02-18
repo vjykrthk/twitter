@@ -14,10 +14,10 @@
 	</aside>
 	<div class="span8">
 		<%= render 'follow_form' %>
-        <%= render 'search_form' %>
 		<% if @microposts.any? %>
 			<%= content_tag(:h3, "Micropost(#{@microposts.count})") %>
-			<ol class="microposts">
+            <%= render 'search_form' %>
+            <ol class="microposts">
 				<%= render @microposts %>
 			</ol>
 		<% end %>
